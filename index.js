@@ -3,18 +3,42 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const server = require("http").createServer(app);
+const morgan = require("morgan");
+const rfs = require("rotating-file-stream");
+const fs = require("fs");
+const path = require("path");
+const configureSwagger = require("./swagger");
 const sequelize = require("./db");
 const router = require("./routes/index");
 const configureWebSocket = require("./websocket");
 
 const PORT = process.env.PORT || 8000;
 
+const logDirectory = path.join(__dirname, "logs");
+
+const accessLogStream = rfs.createStream("access.log", {
+  interval: "1d",
+  path: logDirectory,
+});
+
+fs.mkdirSync(logDirectory, { recursive: true });
+
+app.use(morgan("common", { stream: accessLogStream }));
 app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 app.use("/api", router);
 
 configureWebSocket(server);
+configureSwagger(app);
+
+app.use((req, res, next) => {
+  if (req.originalUrl === "/favicon.ico") {
+    res.status(204).json({ nope: true });
+  } else {
+    next();
+  }
+});
 
 const start = async () => {
   try {

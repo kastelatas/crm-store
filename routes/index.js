@@ -6,11 +6,13 @@ const ClientRouter = require("./ClientRouter");
 const MenuRouter = require("./MenuRouter");
 const IngredientRouter = require("./IngredientRouter");
 const OrderRouter = require("./OrderRouter");
+const MenuIngredient = require("./MenuIngredient");
 
 router.use("/user", UserRouter);
-router.use("/client", ClientRouter);
+router.use("/clients", ClientRouter);
 router.use("/menu", MenuRouter);
 router.use("/ingredient", IngredientRouter);
-router.use("/order", OrderRouter);
+router.use("/orders", OrderRouter);
+router.use("/menuIngredient", MenuIngredient);
 
 module.exports = router;

@@ -11,6 +11,10 @@ const Ingredient = sequelize.define("Ingredient", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  quantity: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+  },
   measurementUnit: {
     type: DataTypes.STRING,
     allowNull: false,

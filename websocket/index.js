@@ -1,4 +1,5 @@
 const WebSocket = require("ws");
+const handleOrderToKitchenEvent = require("./events/orderToKitchenEventHandler");
 
 const configureWebSocket = (server) => {
   const wss = new WebSocket.Server({ server });
@@ -11,9 +12,11 @@ const configureWebSocket = (server) => {
 
       const parsedMessage = JSON.parse(message);
       const messageType = parsedMessage.type;
+      const eventData = parsedMessage.data;
 
       switch (messageType) {
-        case value:
+        case "orderToKitchen":
+          handleOrderToKitchenEvent(ws, eventData);
           break;
 
         default:
