@@ -19,6 +19,12 @@ cd crm-store
 npm install
 ```
 
+4. Install PostgreSQL [https://www.postgresql.org/](https://www.postgresql.org/).
+
+5. Create a DataBase
+   
+6. Update .env file 
+
 4. Start the application:
 
 ```
