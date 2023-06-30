@@ -4,10 +4,10 @@ const configureWebSocket = (server) => {
   const wss = new WebSocket.Server({ server });
 
   wss.on("connection", (ws) => {
-    console.log("Новый клиент подключился к WebSocket");
+    console.log("New client connected to WebSocket");
 
     ws.on("message", (message) => {
-      console.log("Получено сообщение:", message);
+      console.log("Message received:", message);
 
       const parsedMessage = JSON.parse(message);
       const messageType = parsedMessage.type;
@@ -19,15 +19,12 @@ const configureWebSocket = (server) => {
         default:
           break;
       }
-      // console.log("message", typeof message);
-      // console.log("parsedMessage", parsedMessage);
-      // console.log("messageType", messageType);
 
-      ws.send(`Ответ на сообщение "${message}"`);
+      ws.send(`Message reply "${message}"`);
     });
 
     ws.on("close", () => {
-      console.log("Клиент отключился от WebSocket");
+      console.log("Client disconnected from WebSocket");
     });
   });
 };

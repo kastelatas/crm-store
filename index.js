@@ -1,24 +1,29 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const server = require("http").createServer(app);
+const sequelize = require("./db");
+const router = require("./routes/index");
 const configureWebSocket = require("./websocket");
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 
-// Middleware и настройки Express
+app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
+app.use("/api", router);
 
 configureWebSocket(server);
 
 const start = async () => {
   try {
-    // await sequelize.authenticate();
-    // await sequelize.sync({
-    //   force: false,
-    // });
+    await sequelize.authenticate();
+    await sequelize.sync({
+      force: false,
+    });
     server.listen(PORT, () => {
-      console.log(`Сервер запущен на порту ${PORT}`);
+      console.log(`Server started on port ${PORT}`);
     });
   } catch (e) {
     console.log(e);
