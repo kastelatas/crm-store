@@ -11,6 +11,14 @@ const configureSwagger = require("./swagger");
 const sequelize = require("./db");
 const router = require("./src/routes");
 const configureWebSocket = require("./src/websocket");
+const {
+  generateFakeClients,
+  generateFakeIngredients,
+  generateFakeMenuIngredients,
+  generateFakeMenus,
+  generateFakeOrders,
+} = require("./fakeData");
+const faker = require("faker");
 
 const PORT = process.env.PORT || 8000;
 
@@ -46,6 +54,12 @@ const start = async () => {
     await sequelize.sync({
       force: false,
     });
+    generateFakeClients(10, faker);
+    generateFakeMenuIngredients(10, faker);
+    generateFakeMenus(10, faker);
+    generateFakeOrders(10, faker);
+    generateFakeIngredients(10, faker);
+
     server.listen(PORT, () => {
       console.log(`Server started on port ${PORT}`);
     });

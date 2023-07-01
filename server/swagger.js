@@ -10,7 +10,7 @@ const configureSwagger = (app) => {
       basePath: "/",
     },
     basedir: __dirname,
-    files: ["./routes/*.js"],
+    files: ["./src/routes/*.js"],
   };
 
   expressSwagger(app)(expressSwaggerOptions);
