@@ -1,16 +1,16 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const cors = require("cors");
 const server = require("http").createServer(app);
+const cors = require("cors");
 const morgan = require("morgan");
 const rfs = require("rotating-file-stream");
 const fs = require("fs");
 const path = require("path");
 const configureSwagger = require("./swagger");
 const sequelize = require("./db");
-const router = require("./routes/index");
-const configureWebSocket = require("./websocket");
+const router = require("./src/routes");
+const configureWebSocket = require("./src/websocket");
 
 const PORT = process.env.PORT || 8000;
 
