@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Логи</title>
+</head>
+
+<body>
+  <div id="log-container"></div>
+  <script>
+    // JavaScript-код для обновления логов в реальном времени
+    const logContainer = document.getElementById('log-container');
+    const socket = new WebSocket('ws://localhost:8080'); // WebSocket-соединение с сервером Qt
+
+    socket.onmessage = (event) => {
+      // Обновление содержимого лог-контейнера при получении сообщения от сервера Qt
+      const logMessage = event.data;
+      logContainer.innerHTML += `<p>${logMessage}</p>`;
+    };
+  </script>
+</body>
+
+</html>
