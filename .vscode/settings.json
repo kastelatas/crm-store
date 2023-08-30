@@ -1,6 +1,7 @@
 {
   "cmake.sourceDirectory": "C:/Users/Admin/Desktop/crm-store/client/desktop",
   "files.associations": {
-    "qmainwindow": "cpp"
+    "qmainwindow": "cpp",
+    "qjsonobject": "cpp"
   }
 }

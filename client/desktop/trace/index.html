@@ -2,22 +2,22 @@
 <html>
 
 <head>
-  <title>Логи</title>
+  <title>Trace</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <div id="log-container"></div>
-  <script>
-    // JavaScript-код для обновления логов в реальном времени
-    const logContainer = document.getElementById('log-container');
-    const socket = new WebSocket('ws://localhost:8080'); // WebSocket-соединение с сервером Qt
+  <button id="open">Open</button>
+  <button id="close">Close</button>
+  <table id="log-container">
+    <thead>
+      <td width="250px">Time</td>
+      <td width="150px">Type</td>
+      <td>Data</td>
+    </thead>
+  </table>
 
-    socket.onmessage = (event) => {
-      // Обновление содержимого лог-контейнера при получении сообщения от сервера Qt
-      const logMessage = event.data;
-      logContainer.innerHTML += `<p>${logMessage}</p>`;
-    };
-  </script>
+  <script src="js/main.js" defer type="module"></script>
 </body>
 
 </html>

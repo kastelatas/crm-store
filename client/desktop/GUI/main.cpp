@@ -1,6 +1,10 @@
 #include "mainwindow.h"
 #include <QApplication>
 
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QDateTime>
+
 #include <QCoreApplication>
 #include <QTcpServer>
 #include <QWebSocketServer>
@@ -22,12 +26,17 @@ int main(int argc, char *argv[])
 
         QObject::connect(&server, &QWebSocketServer::newConnection, [&server]()
                          {
-            // Обработка нового WebSocket-соединения
-            QWebSocket *socket = server.nextPendingConnection();
-            qDebug() << "Подключено новое WebSocket-соединение";
+                             QWebSocket *socket = server.nextPendingConnection();
+                             qDebug() << "Подключено новое WebSocket-соединение";
 
-            // Отправка логов клиенту (пример)
-            socket->sendTextMessage("Привет, это WebSocket-сервер!"); });
+                             QDateTime currentDateTime = QDateTime::currentDateTime();
+
+                             QJsonObject jsonObject;
+                             jsonObject["type"] = "text";
+                             jsonObject["time"] = currentDateTime.toString("yyyy-MM-dd hh:mm:ss");
+                             jsonObject["data"] = 30;
+
+                             socket->sendTextMessage(QJsonDocument(jsonObject).toJson()); });
     }
     else
     {

@@ -26,21 +26,7 @@
     <property name="currentIndex">
      <number>0</number>
     </property>
-    <widget class="QWidget" name="page">
-     <widget class="QPushButton" name="secondButton">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>140</y>
-        <width>271</width>
-        <height>171</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>PushButton</string>
-      </property>
-     </widget>
-    </widget>
+    <widget class="QWidget" name="page"/>
     <widget class="QWidget" name="page_2">
      <widget class="QPushButton" name="mainButton">
       <property name="geometry">
@@ -64,7 +50,7 @@
      <x>0</x>
      <y>0</y>
      <width>1226</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
