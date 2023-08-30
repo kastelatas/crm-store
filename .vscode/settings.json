@@ -2,6 +2,9 @@
   "cmake.sourceDirectory": "C:/Users/Admin/Desktop/crm-store/client/desktop",
   "files.associations": {
     "qmainwindow": "cpp",
-    "qjsonobject": "cpp"
+    "qjsonobject": "cpp",
+    "xmemory0": "cpp",
+    "qwebsocket": "cpp",
+    "qwebsocketserver": "cpp"
   }
 }

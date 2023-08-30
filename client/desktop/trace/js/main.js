@@ -4,16 +4,17 @@ const logContainer = document.getElementById('log-container');
 const closeButton = document.getElementById('close');
 const openButton = document.getElementById('open');
 
-const socket = new WS(logContainer);
+let socket = null;
 
 openButton.addEventListener('click', () => {
-  // socket.onopen();
-  // socket.onmessage();
+  socket = new WS('ws://localhost:8080', logContainer)
+  socket.onopen();
+  socket.onmessage();
 })
 
 closeButton.addEventListener('click', () => {
   socket.close();
 })
 
-socket.onopen();
-socket.onmessage();
+// socket.onopen();
+// socket.onmessage();

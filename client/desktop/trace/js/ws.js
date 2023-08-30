@@ -1,18 +1,18 @@
 class WS {
-  constructor(traceContainer) {
-    this.socket = new WebSocket('ws://localhost:8080');
+  constructor(url, traceContainer) {
+    this.socket = new WebSocket(url);
     this.traceContainer = traceContainer;
   }
-  send(data) {
-    this.socket.send(data);
-  }
+
   close() {
     console.log('ws closed');
     this.socket.close();
   }
 
   onopen() {
-    console.log('ws connected');
+    this.socket.onopen = () => {
+      console.log('ws connected');
+    }
   }
 
   onmessage() {
@@ -22,8 +22,10 @@ class WS {
     }
   }
 
-  onerror(evt) {
-    console.error('WebSocket error observed:', evt);
+  onerror() {
+    this.socket.onerror = (evt) => {
+      console.error('WebSocket error observed:', evt);
+    }
   }
 }
 
