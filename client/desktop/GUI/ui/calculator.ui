@@ -1,21 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <author/>
- <comment/>
- <exportmacro/>
  <class>calculator</class>
- <widget name="calculator" class="QWidget">
+ <widget class="QWidget" name="calculator">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>940</width>
+    <height>663</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
  </widget>
- <pixmapfunction/>
+ <resources/>
  <connections/>
 </ui>

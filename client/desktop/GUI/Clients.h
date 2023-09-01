@@ -3,17 +3,18 @@
 
 #include <QWidget>
 
-namespace Ui {
-class clients;
+namespace Ui
+{
+    class clients;
 }
 
-class clients : public QWidget
+class Clients : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit clients(QWidget *parent = 0);
-    ~clients();
+    explicit Clients(QWidget *parent = 0);
+    ~Clients();
 
 private:
     Ui::clients *ui;

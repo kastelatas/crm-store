@@ -3,17 +3,18 @@
 
 #include <QWidget>
 
-namespace Ui {
-class ingredients;
+namespace Ui
+{
+    class ingredients;
 }
 
-class ingredients : public QWidget
+class Ingredients : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit ingredients(QWidget *parent = 0);
-    ~ingredients();
+    explicit Ingredients(QWidget *parent = 0);
+    ~Ingredients();
 
 private:
     Ui::ingredients *ui;

@@ -10,12 +10,14 @@
 #include <QWebSocketServer>
 #include <QWebSocket>
 
+#include <thread>
+#include <chrono>
+
 int main(int argc, char *argv[])
 {
 
     QApplication a(argc, argv);
 
-    // Создайте WebSocket-сервер
     QWebSocketServer server("ws://localhost:8080", QWebSocketServer::NonSecureMode);
 
     QHostAddress address = QHostAddress("localhost:8080");
@@ -31,12 +33,12 @@ int main(int argc, char *argv[])
 
                              QDateTime currentDateTime = QDateTime::currentDateTime();
 
-                             QJsonObject jsonObject;
-                             jsonObject["type"] = "text";
-                             jsonObject["time"] = currentDateTime.toString("yyyy-MM-dd hh:mm:ss");
-                             jsonObject["data"] = 30;
+                             QJsonObject jsonObject1;
+                             jsonObject1["type"] = "text";
+                             jsonObject1["time"] = currentDateTime.toString("yyyy-MM-dd hh:mm:ss");
+                             jsonObject1["data"] = 30;
 
-                             socket->sendTextMessage(QJsonDocument(jsonObject).toJson()); });
+                             socket->sendTextMessage(QJsonDocument(jsonObject1).toJson()); });
     }
     else
     {

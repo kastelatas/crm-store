@@ -5,6 +5,14 @@
     "qjsonobject": "cpp",
     "xmemory0": "cpp",
     "qwebsocket": "cpp",
-    "qwebsocketserver": "cpp"
-  }
+    "qwebsocketserver": "cpp",
+    "chrono": "cpp",
+    "map": "cpp",
+    "list": "cpp",
+    "vector": "cpp",
+    "xstring": "cpp",
+    "qdebug": "cpp"
+  },
+  "C_Cpp.errorSquiggles": "disabled",
+  "C_Cpp.autocomplete": "default"
 }

@@ -22,8 +22,27 @@ find_package(Qt5 COMPONENTS Core WebSockets REQUIRED)
 set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
+        menu.cpp    
+        orders.cpp
+        ingredients.cpp
+        calculator.cpp
+        clients.cpp
+        
         mainwindow.h
+        menu.h
+        orders.h
+        ingredients.h
+        calculator.h
+        clients.h
+
+        defines/enums/MenuItems.hpp
+        
         ui/mainwindow.ui
+        ui/orders.ui
+        ui/menu.ui
+        ui/ingredients.ui
+        ui/calculator.ui
+        ui/clients.ui
 )
 
 add_executable(GUI)

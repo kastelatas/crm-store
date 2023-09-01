@@ -3,17 +3,18 @@
 
 #include <QWidget>
 
-namespace Ui {
-class calculator;
+namespace Ui
+{
+    class calculator;
 }
 
-class calculator : public QWidget
+class Calculator : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit calculator(QWidget *parent = 0);
-    ~calculator();
+    explicit Calculator(QWidget *parent = 0);
+    ~Calculator();
 
 private:
     Ui::calculator *ui;

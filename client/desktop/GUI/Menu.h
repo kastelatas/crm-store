@@ -3,17 +3,18 @@
 
 #include <QWidget>
 
-namespace Ui {
-class menu;
+namespace Ui
+{
+    class menu;
 }
 
-class menu : public QWidget
+class Menu : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit menu(QWidget *parent = 0);
-    ~menu();
+    explicit Menu(QWidget *parent = 0);
+    ~Menu();
 
 private:
     Ui::menu *ui;

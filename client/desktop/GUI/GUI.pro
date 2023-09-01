@@ -10,14 +10,29 @@ CONFIG += c++11
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    menu.cpp \
+    orders.cpp \
+    ingredients.cpp \
+    calculator.cpp \
+    clients.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    menu.h \
+    defines/enums/MenuItems.hpp \
+    orders.h \
+    ingredients.h \
+    calculator.h \
+    clients.h
 
 FORMS += \
-    AuthScreen.ui \
-    ui/mainwindow.ui
+    ui/mainwindow.ui \
+    ui/menu.ui \
+    ui/orders.ui \
+    ui/ingredients.ui \
+    ui/calculator.ui \
+    ui/clients.ui
 
 LIBS += -L/../build -app
 
