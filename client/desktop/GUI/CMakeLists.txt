@@ -19,6 +19,8 @@ find_package(QT NAMES Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 find_package(Qt5 COMPONENTS Core WebSockets REQUIRED)
 
+add_subdirectory(icons)
+
 set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
@@ -36,7 +38,7 @@ set(PROJECT_SOURCES
         clients.h
 
         defines/enums/MenuItems.hpp
-        
+
         ui/mainwindow.ui
         ui/orders.ui
         ui/menu.ui

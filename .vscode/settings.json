@@ -13,7 +13,8 @@
     "xstring": "cpp",
     "qdebug": "cpp",
     "qwidget": "cpp",
-    "qcombobox": "cpp"
+    "qcombobox": "cpp",
+    "qpushbutton": "cpp"
   },
   "C_Cpp.errorSquiggles": "disabled",
   "C_Cpp.autocomplete": "default"

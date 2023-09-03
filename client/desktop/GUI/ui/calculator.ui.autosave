@@ -46,7 +46,7 @@
     </font>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
@@ -211,6 +211,11 @@
        <width>921</width>
        <height>551</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
     </widget>
     <widget class="QWidget" name="layoutWidget">

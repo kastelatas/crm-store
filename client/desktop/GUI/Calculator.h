@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QComboBox>
+#include <QPushButton>
 
 namespace Ui
 {
@@ -47,17 +48,24 @@ public slots:
     void copyLayout(QLayout *sourceLayout, QLayout *targetLayout);
     void calcCost();
     void removeIngridient(const QModelIndex &index);
+    void changeTab(int index);
+    void addIngridient();
 
 private:
-    QComboBox* createQuantityUnitsComboBox();
-    QComboBox* createPriceUnitsComboBox();
+    QComboBox *createQuantityUnitsComboBox();
+    QComboBox *createPriceUnitsComboBox();
+    QComboBox *createIngridientsComboBox();
+    QPushButton *createDeleteButton();
     float coefficient(PriceUnit priseUnit, QuantityUnit quantityUnit) const;
+    void updateDataInIngridientsComboBox();
+    void writeToFile();
+    void readFromFile();
 
     Ui::calculator *mUi;
+    QVector<QString> mIngredients;
 };
 
 Q_DECLARE_METATYPE(PriceUnit)
 Q_DECLARE_METATYPE(QuantityUnit)
 
 #endif // CALCULATOR_H
-

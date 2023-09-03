@@ -34,7 +34,10 @@ FORMS += \
     ui/calculator.ui \
     ui/clients.ui
 
-LIBS += -L/../build -app
+LIBS += -L/../build -app \
+QTcpServer \
+QWebSocketServer \
+QWebSocket \
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
