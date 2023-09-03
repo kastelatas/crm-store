@@ -1,1 +1,6 @@
 build
+.env
+client/build*/
+logs/
+node_modules/
+client/desktop/CMakeLists.txt.user

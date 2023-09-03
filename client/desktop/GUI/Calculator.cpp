@@ -1,5 +1,6 @@
 #include "Calculator.h"
 #include "ui_calculator.h"
+#include <QDebug>
 
 Calculator::Calculator(QWidget *parent) : QWidget(parent),
                                           mUi(new Ui::calculator)
@@ -11,21 +12,24 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent),
     if (mUi != NULL)
     {
         mUi->calcTableWidget->setRowCount(1);
-        mUi->calcTableWidget->setColumnCount(4);
+        mUi->calcTableWidget->setColumnCount(5);
 
-        mUi->calcTableWidget->setHorizontalHeaderLabels({"Название", "Кол-во", "Един. измерения", "Цена за кг."});
+        mUi->calcTableWidget->setHorizontalHeaderLabels({
+                        "Название",
+                        "Кол-во в", "Един. измерения",
+                        "Цена за", "Един. измерения"
+                    });
 
         QHeaderView *header = mUi->calcTableWidget->horizontalHeader();
 
         // Устанавливаем режим растяжения для каждой колонки
-        for (int col = 0; col < mUi->calcTableWidget->columnCount(); ++col)
+        for (int col = 0, count = mUi->calcTableWidget->columnCount(); col < count; ++col)
         {
             header->setSectionResizeMode(col, QHeaderView::Stretch);
         }
 
-        QComboBox *comboBox = createComboBoxWithUnity();
-
-        mUi->calcTableWidget->setCellWidget(0, 2, comboBox);
+        mUi->calcTableWidget->setCellWidget(0, 4, createPriceUnitsComboBox());
+        mUi->calcTableWidget->setCellWidget(0, 2, createQuantityUnitsComboBox());
 
         mUi->calcTableWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
 
@@ -42,12 +46,11 @@ Calculator::~Calculator()
 
 void Calculator::addNewIngridient()
 {
-    int rowCount = mUi->calcTableWidget->rowCount(); // Получаем текущее количество строк
-
-    QComboBox *comboBox = createComboBoxWithUnity();
+    const int rowCount = mUi->calcTableWidget->rowCount(); // Получаем текущее количество строк
 
     mUi->calcTableWidget->insertRow(rowCount); // Добавляем новую строку
-    mUi->calcTableWidget->setCellWidget(rowCount, 2, comboBox);
+    mUi->calcTableWidget->setCellWidget(rowCount, 4, createPriceUnitsComboBox());
+    mUi->calcTableWidget->setCellWidget(rowCount, 2, createQuantityUnitsComboBox());
 }
 
 void Calculator::copyLayout(QLayout *sourceLayout, QLayout *targetLayout)
@@ -68,8 +71,8 @@ void Calculator::copyLayout(QLayout *sourceLayout, QLayout *targetLayout)
 
 void Calculator::calcCost()
 {
-    int rowCount = mUi->calcTableWidget->rowCount();
-    int colCount = mUi->calcTableWidget->columnCount();
+    const int rowCount = mUi->calcTableWidget->rowCount();
+    const int colCount = mUi->calcTableWidget->columnCount();
 
     QVector<Ingredient> tableData; // Вектор для хранения данных
 
@@ -78,37 +81,26 @@ void Calculator::calcCost()
         Ingredient rowData; // Вектор для хранения данных строки
         for (int col = 0; col < colCount; ++col)
         {
-            QTableWidgetItem *item = mUi->calcTableWidget->item(row, col);
-            if (item)
+            const auto *item = mUi->calcTableWidget->item(row, col);
+            const auto *comboBox = qobject_cast<QComboBox *>(mUi->calcTableWidget->cellWidget(row, col));
+            if (item || comboBox)
             {
-                QString cellData = "";
-
-                QComboBox *comboBox = qobject_cast<QComboBox *>(mUi->calcTableWidget->cellWidget(row, col));
-                if (comboBox)
-                {
-                    cellData = comboBox->currentText();
-                }
-                else
-                {
-                    cellData = item->text();
-                }
-
                 switch (col)
                 {
                 case 0:
-                    rowData.name = cellData;
+                    rowData.name = item->text();
                     break;
                 case 1:
-                    rowData.quantity = cellData;
-
+                    rowData.quantity = item->text().toFloat();
                     break;
                 case 2:
-                    rowData.unity = cellData;
-
+                    rowData.quantityUnit = comboBox->itemData(comboBox->currentIndex()).value<QuantityUnit>();
                     break;
                 case 3:
-                    rowData.price = cellData;
-
+                    rowData.price = item->text().toFloat();
+                    break;
+                case 4:
+                    rowData.priceUnit = comboBox->itemData(comboBox->currentIndex()).value<PriceUnit>();
                     break;
                 default:
                     break;
@@ -122,10 +114,11 @@ void Calculator::calcCost()
 
     for (int i = 0; i < tableData.size(); i++)
     {
-        int quantity = tableData[i].quantity.toInt();
-        int price = tableData[i].price.toInt();
+        const auto& item = tableData[i];
+        float quantity = item.quantity;
+        float price = item.price;
 
-        double rowCost = (quantity * price) / 1000.0; // Делим на 1000, чтобы перевести в граммы
+        double rowCost = (quantity * price) / coefficient(item.priceUnit, item.quantityUnit); // Делим на 1000, чтобы перевести в граммы
 
         productCost += rowCost;
     }
@@ -141,13 +134,43 @@ void Calculator::removeIngridient(const QModelIndex &index)
     }
 }
 
-QComboBox *Calculator::createComboBoxWithUnity()
+QComboBox *Calculator::createQuantityUnitsComboBox()
 {
-    QComboBox *comboBox = new QComboBox;
-    comboBox->addItem("кг");
-    comboBox->addItem("г");
-    comboBox->addItem("л");
-    comboBox->addItem("мл");
+    auto comboBox = new QComboBox(mUi->calcTableWidget);
+    comboBox->addItem("кг",  QVariant::fromValue(QuantityUnit::KILOGRAMM));
+    comboBox->addItem("г", QVariant::fromValue(QuantityUnit::GRAMM));
+    comboBox->addItem("л", QVariant::fromValue(QuantityUnit::LITER));
+    comboBox->addItem("мл", QVariant::fromValue(QuantityUnit::MILLILITER));
+    comboBox->addItem("шт", QVariant::fromValue(QuantityUnit::UNIT));
 
     return comboBox;
+}
+
+QComboBox* Calculator::createPriceUnitsComboBox()
+{
+    auto comboBox = new QComboBox(mUi->calcTableWidget);
+    comboBox->addItem("грн/кг",  QVariant::fromValue(PriceUnit::UAH_PER_KG));
+    comboBox->addItem("грн/л", QVariant::fromValue(PriceUnit::UAH_PER_LITER));
+    comboBox->addItem("грн/шт", QVariant::fromValue(PriceUnit::UAH_PER_UNIT));
+
+    return comboBox;
+}
+
+/*
+            | UAH_PER_KG	UAH_PER_LITER	UAH_PER_UNIT
+KILOGRAMM	| 1             PO              N/A
+GRAMM	    | 1000          PO              N/A
+LITER	    | PO            1               N/A
+MILLILITER	| PO            1000            N/A
+UNIT	    | N/A           N/A             1
+
+*/
+
+float Calculator::coefficient(PriceUnit priseUnit, QuantityUnit quantityUnit) const
+{
+    float result = 1.0;
+
+
+
+    return result;
 }
