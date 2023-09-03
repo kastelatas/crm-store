@@ -119,12 +119,13 @@ void Calculator::calcCost()
         tableData.push_back(rowData);
     }
 
-    for (int i = 0; i < tableData.size(); i++)
-    {
-        productCost += (tableData[i][1].toInt() * (tableData[i][3].toInt()) / 1000);
-    }
+    // TODO change for calculation
+    //  for (int i = 0; i < tableData.size(); i++)
+    //  {
+    //      productCost += (tableData[i][1].toInt() * (tableData[i][3].toInt()) / 1000);
+    //  }
 
-    mUi->productCost->setText(QString::number(productCost) + " грн.");
+    // mUi->productCost->setText(QString::number(productCost) + " грн.");
 }
 
 void Calculator::removeIngridient(const QModelIndex &index)
