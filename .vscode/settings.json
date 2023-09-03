@@ -11,7 +11,9 @@
     "list": "cpp",
     "vector": "cpp",
     "xstring": "cpp",
-    "qdebug": "cpp"
+    "qdebug": "cpp",
+    "qwidget": "cpp",
+    "qcombobox": "cpp"
   },
   "C_Cpp.errorSquiggles": "disabled",
   "C_Cpp.autocomplete": "default"
