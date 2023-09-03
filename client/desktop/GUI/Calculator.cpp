@@ -70,7 +70,6 @@ void Calculator::calcCost()
 {
     int rowCount = mUi->calcTableWidget->rowCount();
     int colCount = mUi->calcTableWidget->columnCount();
-    double productCost = 0;
 
     QVector<Ingredient> tableData; // Вектор для хранения данных
 
@@ -103,11 +102,11 @@ void Calculator::calcCost()
                     rowData.quantity = cellData;
 
                     break;
-                case 1:
+                case 2:
                     rowData.unity = cellData;
 
                     break;
-                case 1:
+                case 3:
                     rowData.price = cellData;
 
                     break;
@@ -119,13 +118,19 @@ void Calculator::calcCost()
         tableData.push_back(rowData);
     }
 
-    // TODO change for calculation
-    //  for (int i = 0; i < tableData.size(); i++)
-    //  {
-    //      productCost += (tableData[i][1].toInt() * (tableData[i][3].toInt()) / 1000);
-    //  }
+    double productCost = 0;
 
-    // mUi->productCost->setText(QString::number(productCost) + " грн.");
+    for (int i = 0; i < tableData.size(); i++)
+    {
+        int quantity = tableData[i].quantity.toInt();
+        int price = tableData[i].price.toInt();
+
+        double rowCost = (quantity * price) / 1000.0; // Делим на 1000, чтобы перевести в граммы
+
+        productCost += rowCost;
+    }
+
+    mUi->productCost->setText(QString::number(productCost) + " грн.");
 }
 
 void Calculator::removeIngridient(const QModelIndex &index)
