@@ -2,11 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "Menu.h"
-#include "orders.h"
-#include "ingredients.h"
-#include "calculator.h"
-#include "clients.h"
+#include "src/screens/Menu/menu.h"
+#include "src/screens/Orders/orders.h"
+#include "src/screens/Ingredients/ingredients.h"
+#include "src/screens/Calculator/calculator.h"
+#include "src/screens/Clients/clients.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui

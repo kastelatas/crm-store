@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui network websockets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -11,20 +11,20 @@ CONFIG += c++11
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    menu.cpp \
-    orders.cpp \
-    ingredients.cpp \
-    calculator.cpp \
-    clients.cpp
+    src/screens/Menu/menu.cpp  \   
+    src/screens/Orders/orders.cpp \
+    src/screens/Ingredients/ingredients.cpp \
+    src/screens/Calculator/calculator.cpp \
+    src/screens/Clients/clients.cpp \
 
 HEADERS += \
     mainwindow.h \
-    menu.h \
     defines/enums/MenuItems.hpp \
-    orders.h \
-    ingredients.h \
-    calculator.h \
-    clients.h
+    src/screens/Menu/menu.h \ 
+    src/screens/Orders/orders.h \
+    src/screens/Ingredients/ingredients.h \
+    src/screens/Calculator/calculator.h \
+    src/screens/Clients/clients.h \
 
 FORMS += \
     ui/mainwindow.ui \
@@ -35,9 +35,8 @@ FORMS += \
     ui/clients.ui
 
 LIBS += -L/../build -app \
-QTcpServer \
-QWebSocketServer \
-QWebSocket \
+    -lQt5Network \
+    -lQt5WebSockets
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
