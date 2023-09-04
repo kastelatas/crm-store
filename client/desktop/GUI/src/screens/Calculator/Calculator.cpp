@@ -4,6 +4,7 @@
 #include "QFile"
 #include <QPdfWriter>
 #include <QPainter>
+#include <functional>
 
 Calculator::Calculator(QWidget *parent) : QWidget(parent),
                                           mUi(new Ui::calculator)
@@ -37,15 +38,16 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent),
 
         // configuration ingridients table
         mUi->ingridientTableWidget->setRowCount(0);
-        mUi->ingridientTableWidget->setColumnCount(1);
-        mUi->ingridientTableWidget->setHorizontalHeaderLabels({"Название"});
+        mUi->ingridientTableWidget->setColumnCount(2);
+        mUi->ingridientTableWidget->setHorizontalHeaderLabels({"Название", " "});
+        mUi->ingridientTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-        QHeaderView *ingridientTableHeader = mUi->ingridientTableWidget->horizontalHeader();
+        // QHeaderView *ingridientTableHeader = mUi->ingridientTableWidget->horizontalHeader();
 
-        for (int col = 0, count = mUi->ingridientTableWidget->columnCount(); col < count; ++col)
-        {
-            ingridientTableHeader->setSectionResizeMode(col, QHeaderView::Stretch);
-        }
+        // for (int col = 0, count = mUi->ingridientTableWidget->columnCount(); col < count; ++col)
+        // {
+        //     ingridientTableHeader->setSectionResizeMode(col, QHeaderView::Stretch);
+        // }
 
         readFromFile();
         updateDataInIngridientsComboBox();
@@ -76,7 +78,7 @@ void Calculator::addNewIngridient()
     mUi->calcTableWidget->setCellWidget(rowCount, 0, createIngridientsComboBox());
     mUi->calcTableWidget->setCellWidget(rowCount, 4, createPriceUnitsComboBox());
     mUi->calcTableWidget->setCellWidget(rowCount, 2, createQuantityUnitsComboBox());
-    mUi->calcTableWidget->setCellWidget(rowCount, 5, createDeleteButton(rowCount));
+    mUi->calcTableWidget->setCellWidget(rowCount, 5, createDeleteButton(TableID::CALC_TABLE));
 }
 
 void Calculator::calcCost()
@@ -167,22 +169,53 @@ QComboBox *Calculator::createIngridientsComboBox()
     return comboBox;
 }
 
-QPushButton *Calculator::createDeleteButton(int rowId)
+QPushButton *Calculator::createDeleteButton(TableID tableId)
 {
-    auto deleteButton = new QPushButton();
+    auto deleteButton = new QPushButton("Удалить");
     // TODO update path to icon
     deleteButton->setIcon(QIcon(":/icons/remove.png"));
     deleteButton->setIconSize(QSize(24, 24));
 
-    // deleteButtonMapper->setMapping(deleteButton, rowId);
-    // connect(deleteButton, SIGNAL(clicked()), deleteButtonMapper, SLOT(map()));
+    connect(deleteButton, &QPushButton::clicked, this, [this, tableId]()
+            { tableId == TableID::CALC_TABLE ? onDeleteCalcButtonClicked() : onDeleteIngridientButtonClicked(); });
 
     return deleteButton;
 }
 
-void Calculator::onDeleteButtonClicked(int rowId)
+void Calculator::onDeleteCalcButtonClicked()
 {
-    mUi->calcTableWidget->removeRow(rowId);
+    QPushButton *button = qobject_cast<QPushButton *>(sender());
+
+    if (button)
+    {
+        int rowIndex = mUi->calcTableWidget->indexAt(button->pos()).row();
+
+        qDebug() << "rowIndex: " << rowIndex;
+
+        mUi->calcTableWidget->removeRow(rowIndex);
+
+        disconnect(button, &QPushButton::clicked, this, nullptr);
+    }
+}
+
+void Calculator::onDeleteIngridientButtonClicked()
+{
+    QPushButton *button = qobject_cast<QPushButton *>(sender());
+
+    if (button)
+    {
+        int rowIndex = mUi->ingridientTableWidget->indexAt(button->pos()).row();
+
+        qDebug() << "rowId: " << rowIndex;
+
+        mUi->ingridientTableWidget->removeRow(rowIndex);
+
+        mIngredients.erase(mIngredients.begin() + rowIndex);
+
+        writeToFile();
+
+        disconnect(button, &QPushButton::clicked, this, nullptr);
+    }
 }
 
 /*
@@ -229,6 +262,7 @@ void Calculator::changeTab(int index)
 {
     if (index == 0)
     {
+        qDebug() << "index: " << index;
         updateDataInIngridientsComboBox();
     }
 }
@@ -265,6 +299,7 @@ void Calculator::addIngridient()
         QTableWidgetItem *newItem = new QTableWidgetItem(mUi->ingridientInput->toPlainText());
 
         mUi->ingridientTableWidget->setItem(rowCount, 0, newItem);
+        mUi->ingridientTableWidget->setCellWidget(rowCount, 1, createDeleteButton(TableID::INGRIDIENTS_TABLE));
 
         mIngredients.push_back(mUi->ingridientInput->toPlainText());
 
@@ -315,6 +350,7 @@ void Calculator::updateIngridientTable()
         const int rowCount = mUi->ingridientTableWidget->rowCount();
         mUi->ingridientTableWidget->insertRow(rowCount);
         mUi->ingridientTableWidget->setItem(rowCount, 0, new QTableWidgetItem(item));
+        mUi->ingridientTableWidget->setCellWidget(rowCount, 1, createDeleteButton(TableID::INGRIDIENTS_TABLE));
     }
 }
 
@@ -322,12 +358,11 @@ void Calculator::clearCalcTable()
 {
     int rowCount = mUi->calcTableWidget->rowCount();
 
-    if (rowCount > 0)
+    for (int i = 0; i < rowCount; i++)
     {
-        for (int i = 0; i < rowCount; i++)
-        {
-            mUi->calcTableWidget->removeRow(0); // Удаляем всегда первую строку, пока таблица не будет пустой
-        }
+        mUi->calcTableWidget->removeRow(0);
+        auto button = qobject_cast<QPushButton *>(mUi->calcTableWidget->cellWidget(0, 5));
+        disconnect(button, &QPushButton::clicked, this, nullptr);
     }
 }
 

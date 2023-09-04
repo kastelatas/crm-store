@@ -27,6 +27,12 @@ enum class QuantityUnit
     UNIT
 };
 
+enum class TableID
+{
+    CALC_TABLE,
+    INGRIDIENTS_TABLE
+};
+
 struct Ingredient
 {
     QString name;
@@ -50,14 +56,15 @@ public slots:
     void changeTab(int index);
     void addIngridient();
     void clearCalcTable();
-    void onDeleteButtonClicked(int rowId);
+    void onDeleteCalcButtonClicked();
+    void onDeleteIngridientButtonClicked();
     void writeToPDF();
 
 private:
     QComboBox *createQuantityUnitsComboBox();
     QComboBox *createPriceUnitsComboBox();
     QComboBox *createIngridientsComboBox();
-    QPushButton *createDeleteButton(int rowId);
+    QPushButton *createDeleteButton(TableID tableId);
     float coefficient(PriceUnit priseUnit, QuantityUnit quantityUnit) const;
     void updateDataInIngridientsComboBox();
     void writeToFile();

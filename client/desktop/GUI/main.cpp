@@ -46,6 +46,9 @@ int main(int argc, char *argv[])
     }
 
     MainWindow w;
+    w.setWindowTitle("CRM Store");
+    w.setWindowIcon(QIcon("C:/Users/Admin/Desktop/crm-store/client/desktop/GUI/icons/favicon.png"));
+
     w.show();
     return a.exec();
 }
