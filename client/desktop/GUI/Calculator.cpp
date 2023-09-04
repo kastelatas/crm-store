@@ -54,7 +54,6 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent),
 
         connect(mUi->addIngridient, SIGNAL(clicked()), this, SLOT(addNewIngridient()));
         connect(mUi->calcCost, SIGNAL(clicked()), this, SLOT(calcCost()));
-        connect(mUi->calcTableWidget, SIGNAL(clicked(const QModelIndex &index)), this, SLOT(removeIngridient(const QModelIndex &index)));
         connect(mUi->calcTabs, SIGNAL(currentChanged(int)), this, SLOT(changeTab(int)));
         connect(mUi->addIngridientToTable, SIGNAL(clicked()), this, SLOT(addIngridient()));
         connect(mUi->clearCalcTable, SIGNAL(clicked()), this, SLOT(clearCalcTable()));
@@ -133,14 +132,6 @@ void Calculator::calcCost()
     }
 
     mUi->productCost->setText(QString::number(productCost) + " грн.");
-}
-
-void Calculator::removeIngridient(const QModelIndex &index)
-{
-    if (index.column() == 0)
-    {
-        mUi->calcTableWidget->removeRow(index.row());
-    }
 }
 
 QComboBox *Calculator::createQuantityUnitsComboBox()

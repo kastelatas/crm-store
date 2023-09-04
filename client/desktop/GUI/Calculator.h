@@ -47,7 +47,6 @@ public:
 public slots:
     void addNewIngridient();
     void calcCost();
-    void removeIngridient(const QModelIndex &index);
     void changeTab(int index);
     void addIngridient();
     void clearCalcTable();
