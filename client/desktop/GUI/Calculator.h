@@ -52,6 +52,7 @@ public slots:
     void addIngridient();
     void clearCalcTable();
     void onDeleteButtonClicked(int rowId);
+    void writeToPDF();
 
 private:
     QComboBox *createQuantityUnitsComboBox();
@@ -65,6 +66,7 @@ private:
     void updateIngridientTable();
 
     Ui::calculator *mUi;
+    QVector<Ingredient> mDish;
     QVector<QString> mIngredients;
     QSignalMapper *deleteButtonMapper;
 };

@@ -2,6 +2,8 @@
 #include "ui_calculator.h"
 #include <QDebug>
 #include "QFile"
+#include <QPdfWriter>
+#include <QPainter>
 
 Calculator::Calculator(QWidget *parent) : QWidget(parent),
                                           mUi(new Ui::calculator)
@@ -12,7 +14,7 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent),
 
     if (mUi != NULL)
     {
-        // конфигурация таблицы калькулятора
+        // configuration calc table
         mUi->calcTableWidget->setRowCount(0);
         mUi->calcTableWidget->setColumnCount(6);
 
@@ -33,7 +35,7 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent),
         // mUi->calcTableWidget->setCellWidget(0, 5, createDeleteButton(0));
         mUi->calcTableWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
 
-        // конфигурация таблицы ингридиентов
+        // configuration ingridients table
         mUi->ingridientTableWidget->setRowCount(0);
         mUi->ingridientTableWidget->setColumnCount(1);
         mUi->ingridientTableWidget->setHorizontalHeaderLabels({"Название"});
@@ -56,6 +58,7 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent),
         connect(mUi->calcTabs, SIGNAL(currentChanged(int)), this, SLOT(changeTab(int)));
         connect(mUi->addIngridientToTable, SIGNAL(clicked()), this, SLOT(addIngridient()));
         connect(mUi->clearCalcTable, SIGNAL(clicked()), this, SLOT(clearCalcTable()));
+        connect(mUi->saveDish, SIGNAL(clicked()), this, SLOT(writeToPDF()));
 
         // connect(deleteButtonMapper, SIGNAL(mapped(int)), this, SLOT(onDeleteButtonClicked(int)));
     }
@@ -81,8 +84,6 @@ void Calculator::calcCost()
 {
     const int rowCount = mUi->calcTableWidget->rowCount();
     const int colCount = mUi->calcTableWidget->columnCount();
-
-    QVector<Ingredient> tableData;
 
     for (int row = 0; row < rowCount; ++row)
     {
@@ -115,14 +116,14 @@ void Calculator::calcCost()
                 }
             }
         }
-        tableData.push_back(rowData);
+        mDish.push_back(rowData);
     }
 
     double productCost = 0;
 
-    for (int i = 0; i < tableData.size(); i++)
+    for (int i = 0; i < mDish.size(); i++)
     {
-        const auto &item = tableData[i];
+        const auto &item = mDish[i];
         float quantity = item.quantity;
         float price = item.price;
 
@@ -337,4 +338,57 @@ void Calculator::clearCalcTable()
             mUi->calcTableWidget->removeRow(0); // Удаляем всегда первую строку, пока таблица не будет пустой
         }
     }
+}
+
+void Calculator::writeToPDF()
+{
+    QPdfWriter pdfWriter("example.pdf");
+    pdfWriter.setPageSize(QPagedPaintDevice::A4);
+    QPainter painter(&pdfWriter);
+
+    painter.drawText(100, 100, "Список ингредиентов:");
+    painter.drawText(100, 300, "");
+
+    QTableWidget table;
+    table.setColumnCount(5); // Количество столбцов
+    table.setHorizontalHeaderLabels({"Ингредиент", "Количество", "Един. изм", "Цена", "Един. изм"});
+    table.setRowCount(mDish.size());
+
+    const int rowHeight = 450; // Установите желаемую высоту строки
+    const int colWidth = 1700; // Установите желаемую ширину столбца
+    table.verticalHeader()->setDefaultSectionSize(rowHeight);
+    for (int col = 0; col < table.columnCount(); ++col)
+    {
+        table.setColumnWidth(col, colWidth);
+    }
+
+    table.setContentsMargins(150, 500, 0, 0);
+
+    QFont font = table.font();
+    font.setPointSize(120); // Установите желаемый размер шрифта
+    table.setFont(font);
+
+    for (int row = 0; row < mDish.size(); ++row)
+    {
+        const Ingredient &ingredient = mDish[row];
+
+        QTableWidgetItem *item = new QTableWidgetItem(ingredient.name);
+
+        // Устанавливаем выравнивание текста в ячейке слева
+        item->setTextAlignment(Qt::AlignVCenter);
+        table.setItem(row, 0, item);
+        table.setItem(row, 1, new QTableWidgetItem(QString::number(ingredient.quantity)));
+        table.setItem(row, 2, new QTableWidgetItem(QString::number(static_cast<int>(ingredient.quantityUnit))));
+        table.setItem(row, 3, new QTableWidgetItem(QString::number(ingredient.price)));
+        table.setItem(row, 4, new QTableWidgetItem(QString::number(static_cast<int>(ingredient.priceUnit))));
+    }
+
+    // Устанавливаем размер таблицы
+    const qreal scale = 20.5; // Увеличьте масштаб, чтобы увеличить размер таблицы
+    table.resize(table.size() * scale);
+
+    // Рисуем таблицу на PDF-странице
+    table.render(&painter);
+
+    painter.end();
 }

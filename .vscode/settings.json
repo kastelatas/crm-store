@@ -14,7 +14,9 @@
     "qdebug": "cpp",
     "qwidget": "cpp",
     "qcombobox": "cpp",
-    "qpushbutton": "cpp"
+    "qpushbutton": "cpp",
+    "system_error": "cpp",
+    "xlocale": "cpp"
   },
   "C_Cpp.errorSquiggles": "disabled",
   "C_Cpp.autocomplete": "default"
