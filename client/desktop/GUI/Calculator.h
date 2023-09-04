@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QComboBox>
 #include <QPushButton>
+#include <QSignalMapper>
 
 namespace Ui
 {
@@ -45,24 +46,27 @@ public:
 
 public slots:
     void addNewIngridient();
-    void copyLayout(QLayout *sourceLayout, QLayout *targetLayout);
     void calcCost();
     void removeIngridient(const QModelIndex &index);
     void changeTab(int index);
     void addIngridient();
+    void clearCalcTable();
+    void onDeleteButtonClicked(int rowId);
 
 private:
     QComboBox *createQuantityUnitsComboBox();
     QComboBox *createPriceUnitsComboBox();
     QComboBox *createIngridientsComboBox();
-    QPushButton *createDeleteButton();
+    QPushButton *createDeleteButton(int rowId);
     float coefficient(PriceUnit priseUnit, QuantityUnit quantityUnit) const;
     void updateDataInIngridientsComboBox();
     void writeToFile();
     void readFromFile();
+    void updateIngridientTable();
 
     Ui::calculator *mUi;
     QVector<QString> mIngredients;
+    QSignalMapper *deleteButtonMapper;
 };
 
 Q_DECLARE_METATYPE(PriceUnit)

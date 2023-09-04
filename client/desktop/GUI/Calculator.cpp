@@ -13,39 +13,51 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent),
     if (mUi != NULL)
     {
         // конфигурация таблицы калькулятора
-        mUi->calcTableWidget->setRowCount(1);
+        mUi->calcTableWidget->setRowCount(0);
         mUi->calcTableWidget->setColumnCount(6);
 
         mUi->calcTableWidget->setHorizontalHeaderLabels({"Название",
                                                          "Кол-во в", "Един. измерения",
                                                          "Цена за", "Един. измерения", "  "});
 
-        QHeaderView *header = mUi->calcTableWidget->horizontalHeader();
+        QHeaderView *calcTableHeader = mUi->calcTableWidget->horizontalHeader();
 
         for (int col = 0, count = mUi->calcTableWidget->columnCount(); col < count; ++col)
         {
-            header->setSectionResizeMode(col, QHeaderView::Stretch);
+            calcTableHeader->setSectionResizeMode(col, QHeaderView::Stretch);
         }
 
-        mUi->calcTableWidget->setCellWidget(0, 0, createIngridientsComboBox());
-        mUi->calcTableWidget->setCellWidget(0, 2, createQuantityUnitsComboBox());
-        mUi->calcTableWidget->setCellWidget(0, 4, createPriceUnitsComboBox());
-        mUi->calcTableWidget->setCellWidget(0, 5, createDeleteButton());
+        // mUi->calcTableWidget->setCellWidget(0, 0, createIngridientsComboBox());
+        // mUi->calcTableWidget->setCellWidget(0, 2, createQuantityUnitsComboBox());
+        // mUi->calcTableWidget->setCellWidget(0, 4, createPriceUnitsComboBox());
+        // mUi->calcTableWidget->setCellWidget(0, 5, createDeleteButton(0));
         mUi->calcTableWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
 
         // конфигурация таблицы ингридиентов
-        mUi->ingridientTableWidget->setRowCount(1);
+        mUi->ingridientTableWidget->setRowCount(0);
         mUi->ingridientTableWidget->setColumnCount(1);
         mUi->ingridientTableWidget->setHorizontalHeaderLabels({"Название"});
 
+        QHeaderView *ingridientTableHeader = mUi->ingridientTableWidget->horizontalHeader();
+
+        for (int col = 0, count = mUi->ingridientTableWidget->columnCount(); col < count; ++col)
+        {
+            ingridientTableHeader->setSectionResizeMode(col, QHeaderView::Stretch);
+        }
+
         readFromFile();
         updateDataInIngridientsComboBox();
+
+        // deleteButtonMapper = new QSignalMapper(this);
 
         connect(mUi->addIngridient, SIGNAL(clicked()), this, SLOT(addNewIngridient()));
         connect(mUi->calcCost, SIGNAL(clicked()), this, SLOT(calcCost()));
         connect(mUi->calcTableWidget, SIGNAL(clicked(const QModelIndex &index)), this, SLOT(removeIngridient(const QModelIndex &index)));
         connect(mUi->calcTabs, SIGNAL(currentChanged(int)), this, SLOT(changeTab(int)));
         connect(mUi->addIngridientToTable, SIGNAL(clicked()), this, SLOT(addIngridient()));
+        connect(mUi->clearCalcTable, SIGNAL(clicked()), this, SLOT(clearCalcTable()));
+
+        // connect(deleteButtonMapper, SIGNAL(mapped(int)), this, SLOT(onDeleteButtonClicked(int)));
     }
 }
 
@@ -62,23 +74,7 @@ void Calculator::addNewIngridient()
     mUi->calcTableWidget->setCellWidget(rowCount, 0, createIngridientsComboBox());
     mUi->calcTableWidget->setCellWidget(rowCount, 4, createPriceUnitsComboBox());
     mUi->calcTableWidget->setCellWidget(rowCount, 2, createQuantityUnitsComboBox());
-    mUi->calcTableWidget->setCellWidget(rowCount, 5, createDeleteButton());
-}
-
-void Calculator::copyLayout(QLayout *sourceLayout, QLayout *targetLayout)
-{
-    for (int i = 0; i < sourceLayout->count(); ++i)
-    {
-        QLayoutItem *item = sourceLayout->itemAt(i);
-        if (item)
-        {
-            QWidget *widget = item->widget();
-            if (widget)
-            {
-                targetLayout->addWidget(widget);
-            }
-        }
-    }
+    mUi->calcTableWidget->setCellWidget(rowCount, 5, createDeleteButton(rowCount));
 }
 
 void Calculator::calcCost()
@@ -100,7 +96,7 @@ void Calculator::calcCost()
                 switch (col)
                 {
                 case 0:
-                    rowData.name = item->text();
+                    rowData.name = comboBox->currentText();
                     break;
                 case 1:
                     rowData.quantity = item->text().toFloat();
@@ -179,14 +175,22 @@ QComboBox *Calculator::createIngridientsComboBox()
     return comboBox;
 }
 
-QPushButton *Calculator::createDeleteButton()
+QPushButton *Calculator::createDeleteButton(int rowId)
 {
     auto deleteButton = new QPushButton();
     // TODO update path to icon
     deleteButton->setIcon(QIcon(":/icons/remove.png"));
     deleteButton->setIconSize(QSize(24, 24));
 
+    // deleteButtonMapper->setMapping(deleteButton, rowId);
+    // connect(deleteButton, SIGNAL(clicked()), deleteButtonMapper, SLOT(map()));
+
     return deleteButton;
+}
+
+void Calculator::onDeleteButtonClicked(int rowId)
+{
+    mUi->calcTableWidget->removeRow(rowId);
 }
 
 /*
@@ -199,9 +203,32 @@ UNIT	    | N/A           N/A             1
 
 */
 
-float Calculator::coefficient(PriceUnit priseUnit, QuantityUnit quantityUnit) const
+float Calculator::coefficient(PriceUnit priceUnit, QuantityUnit quantityUnit) const
 {
     float result = 1.0;
+
+    if (priceUnit == PriceUnit::UAH_PER_KG)
+    {
+        if (quantityUnit == QuantityUnit::KILOGRAMM)
+            result = 1.0;
+        else if (quantityUnit == QuantityUnit::GRAMM)
+            result = 1000.0;
+        // TODO
+    }
+    else if (priceUnit == PriceUnit::UAH_PER_LITER)
+    {
+        if (quantityUnit == QuantityUnit::LITER)
+            result = 1.0;
+        else if (quantityUnit == QuantityUnit::MILLILITER)
+            result = 1000.0;
+        // TODO
+    }
+    else if (priceUnit == PriceUnit::UAH_PER_UNIT)
+    {
+        if (quantityUnit == QuantityUnit::UNIT)
+            result = 1.0;
+        // TODO
+    }
 
     return result;
 }
@@ -226,6 +253,7 @@ void Calculator::updateDataInIngridientsComboBox()
             auto *comboBox = qobject_cast<QComboBox *>(mUi->calcTableWidget->cellWidget(row, col));
             if (comboBox && col == 0)
             {
+                comboBox->clear();
                 for (const auto &item : mIngredients)
                 {
                     comboBox->addItem(item);
@@ -283,5 +311,30 @@ void Calculator::readFromFile()
             mIngredients.push_back(line);
         }
         file.close();
+
+        updateIngridientTable();
+    }
+}
+
+void Calculator::updateIngridientTable()
+{
+    for (const auto &item : mIngredients)
+    {
+        const int rowCount = mUi->ingridientTableWidget->rowCount();
+        mUi->ingridientTableWidget->insertRow(rowCount);
+        mUi->ingridientTableWidget->setItem(rowCount, 0, new QTableWidgetItem(item));
+    }
+}
+
+void Calculator::clearCalcTable()
+{
+    int rowCount = mUi->calcTableWidget->rowCount();
+
+    if (rowCount > 0)
+    {
+        for (int i = 0; i < rowCount; i++)
+        {
+            mUi->calcTableWidget->removeRow(0); // Удаляем всегда первую строку, пока таблица не будет пустой
+        }
     }
 }
