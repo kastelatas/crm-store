@@ -4,6 +4,7 @@
 #include "QFile"
 #include <QPdfWriter>
 #include <QPainter>
+#include <QMessageBox>
 #include <functional>
 
 Calculator::Calculator(QWidget *parent) : QWidget(parent),
@@ -15,6 +16,7 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent),
 
     if (mUi != NULL)
     {
+        mUi->saveDish->setDisabled(true);
         // configuration calc table
         mUi->calcTableWidget->setRowCount(0);
         mUi->calcTableWidget->setColumnCount(6);
@@ -30,10 +32,6 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent),
             calcTableHeader->setSectionResizeMode(col, QHeaderView::Stretch);
         }
 
-        // mUi->calcTableWidget->setCellWidget(0, 0, createIngridientsComboBox());
-        // mUi->calcTableWidget->setCellWidget(0, 2, createQuantityUnitsComboBox());
-        // mUi->calcTableWidget->setCellWidget(0, 4, createPriceUnitsComboBox());
-        // mUi->calcTableWidget->setCellWidget(0, 5, createDeleteButton(0));
         mUi->calcTableWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
 
         // configuration ingridients table
@@ -42,17 +40,8 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent),
         mUi->ingridientTableWidget->setHorizontalHeaderLabels({"Название", " "});
         mUi->ingridientTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-        // QHeaderView *ingridientTableHeader = mUi->ingridientTableWidget->horizontalHeader();
-
-        // for (int col = 0, count = mUi->ingridientTableWidget->columnCount(); col < count; ++col)
-        // {
-        //     ingridientTableHeader->setSectionResizeMode(col, QHeaderView::Stretch);
-        // }
-
         readFromFile();
         updateDataInIngridientsComboBox();
-
-        // deleteButtonMapper = new QSignalMapper(this);
 
         connect(mUi->addIngridient, SIGNAL(clicked()), this, SLOT(addNewIngridient()));
         connect(mUi->calcCost, SIGNAL(clicked()), this, SLOT(calcCost()));
@@ -60,8 +49,6 @@ Calculator::Calculator(QWidget *parent) : QWidget(parent),
         connect(mUi->addIngridientToTable, SIGNAL(clicked()), this, SLOT(addIngridient()));
         connect(mUi->clearCalcTable, SIGNAL(clicked()), this, SLOT(clearCalcTable()));
         connect(mUi->saveDish, SIGNAL(clicked()), this, SLOT(writeToPDF()));
-
-        // connect(deleteButtonMapper, SIGNAL(mapped(int)), this, SLOT(onDeleteButtonClicked(int)));
     }
 }
 
@@ -118,6 +105,7 @@ void Calculator::calcCost()
             }
         }
         mDish.push_back(rowData);
+        mUi->saveDish->setDisabled(false);
     }
 
     double productCost = 0;
@@ -177,7 +165,9 @@ QPushButton *Calculator::createDeleteButton(TableID tableId)
     deleteButton->setIconSize(QSize(24, 24));
 
     connect(deleteButton, &QPushButton::clicked, this, [this, tableId]()
-            { tableId == TableID::CALC_TABLE ? onDeleteCalcButtonClicked() : onDeleteIngridientButtonClicked(); });
+            { tableId == TableID::CALC_TABLE
+                  ? onDeleteCalcButtonClicked()
+                  : onDeleteIngridientButtonClicked(); });
 
     return deleteButton;
 }
@@ -206,7 +196,7 @@ void Calculator::onDeleteIngridientButtonClicked()
     {
         int rowIndex = mUi->ingridientTableWidget->indexAt(button->pos()).row();
 
-        qDebug() << "rowId: " << rowIndex;
+        qDebug() << "rowIndex: " << rowIndex;
 
         mUi->ingridientTableWidget->removeRow(rowIndex);
 
@@ -358,6 +348,8 @@ void Calculator::clearCalcTable()
 {
     int rowCount = mUi->calcTableWidget->rowCount();
 
+    mUi->saveDish->setDisabled(true);
+
     for (int i = 0; i < rowCount; i++)
     {
         mUi->calcTableWidget->removeRow(0);
@@ -368,6 +360,8 @@ void Calculator::clearCalcTable()
 
 void Calculator::writeToPDF()
 {
+    QMessageBox::information(this, "Сохранение", "Рецепт сохранен");
+
     QPdfWriter pdfWriter("example.pdf");
     pdfWriter.setPageSize(QPagedPaintDevice::A4);
     QPainter painter(&pdfWriter);
