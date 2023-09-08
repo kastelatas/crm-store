@@ -13,9 +13,3 @@ enum class QuantityUnit
   MILLILITER,
   UNIT
 };
-
-enum class TableID
-{
-  CALC_TABLE,
-  INGRIDIENTS_TABLE
-};
