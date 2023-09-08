@@ -1,0 +1,23 @@
+set(COMPONENT_NAME common)
+
+add_subdirectory(structs)
+
+add_library(${COMPONENT_NAME})
+
+target_sources(${COMPONENT_NAME}
+   PRIVATE
+      defines/inc/Api.hpp
+      defines/private/Api.cpp
+)
+
+target_include_directories(${COMPONENT_NAME}
+   PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+   PRIVATE
+    private
+)
+
+target_link_libraries(${COMPONENT_NAME}
+   PUBLIC
+      
+   )

@@ -5,6 +5,7 @@
 #include <QPdfWriter>
 #include <QPainter>
 #include <QMessageBox>
+#include <QStyleFactory>
 #include <functional>
 
 Calculator::Calculator(QWidget *parent) : QWidget(parent),
@@ -104,8 +105,23 @@ void Calculator::calcCost()
                 }
             }
         }
-        mDish.push_back(rowData);
-        mUi->saveDish->setDisabled(false);
+        bool checkUnit = checkUnitSimile(rowData.priceUnit, rowData.quantityUnit);
+
+        if (!checkUnit)
+        {
+            qobject_cast<QComboBox *>(mUi->calcTableWidget->cellWidget(row, 2))->setStyleSheet("border:1px solid red;");
+            qobject_cast<QComboBox *>(mUi->calcTableWidget->cellWidget(row, 4))->setStyleSheet("border:1px solid red;");
+            QMessageBox::critical(this, "Ошибка", "Неверные единицы измерения");
+        }
+        else
+        {
+            qobject_cast<QComboBox *>(mUi->calcTableWidget->cellWidget(row, 2))->setStyle(QStyleFactory::create("Windows"));
+            qobject_cast<QComboBox *>(mUi->calcTableWidget->cellWidget(row, 2))->setPalette(qApp->style()->standardPalette());
+            qobject_cast<QComboBox *>(mUi->calcTableWidget->cellWidget(row, 4))->setStyle(QStyleFactory::create("Windows"));
+            qobject_cast<QComboBox *>(mUi->calcTableWidget->cellWidget(row, 4))->setPalette(qApp->style()->standardPalette());
+            mDish.push_back(rowData);
+            mUi->saveDish->setDisabled(false);
+        }
     }
 
     double productCost = 0;
@@ -411,4 +427,24 @@ void Calculator::writeToPDF()
     table.render(&painter);
 
     painter.end();
+}
+
+bool Calculator::checkUnitSimile(PriceUnit priceUnit, QuantityUnit quantityUnit)
+{
+    bool result = false;
+
+    if (quantityUnit == QuantityUnit::UNIT && priceUnit == PriceUnit::UAH_PER_UNIT)
+    {
+        return true;
+    }
+    if (quantityUnit == QuantityUnit::LITER && priceUnit == PriceUnit::UAH_PER_LITER)
+    {
+        return true;
+    }
+    if (quantityUnit == QuantityUnit::KILOGRAMM && priceUnit == PriceUnit::UAH_PER_KG)
+    {
+        return true;
+    }
+
+    return result;
 }

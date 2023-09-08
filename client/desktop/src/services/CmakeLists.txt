@@ -1,0 +1,28 @@
+set(COMPONENT_NAME services)
+
+add_library(${COMPONENT_NAME})
+
+target_sources(${COMPONENT_NAME}
+   PRIVATE
+      inc/MenuService.hpp
+      inc/IngridientsService.hpp
+      inc/ClientsService.hpp
+      inc/OrdersService.hpp
+      
+      private/MenuService.cpp
+      private/IngridientsService.cpp
+      private/ClientsService.cpp
+      private/OrdersService.cpp
+)
+
+target_include_directories(${COMPONENT_NAME}
+   PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+   PRIVATE
+    private
+)
+
+target_link_libraries(${COMPONENT_NAME}
+   PUBLIC
+      common
+   )

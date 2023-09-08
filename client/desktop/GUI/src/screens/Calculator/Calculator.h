@@ -70,6 +70,7 @@ private:
     void writeToFile();
     void readFromFile();
     void updateIngridientTable();
+    bool checkUnitSimile(PriceUnit priceUnit, QuantityUnit quantityUnit);
 
     Ui::calculator *mUi;
     QVector<Ingredient> mDish;

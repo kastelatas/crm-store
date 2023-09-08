@@ -1,0 +1,14 @@
+set(COMPONENT_NAME enums)
+
+add_library(${COMPONENT_NAME} INTERFACE)
+
+target_sources(${COMPONENT_NAME}
+   INTERFACE
+   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+)
+
+target_include_directories(${COMPONENT_NAME}
+   INTERFACE
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
+      #$<INSTALL_INTERFACE:include>
+)
