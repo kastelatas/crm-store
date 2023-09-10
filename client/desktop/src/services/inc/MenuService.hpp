@@ -14,9 +14,11 @@ public:
   ~MenuService();
 
 public:
-  Menu getMenu();
+  Menu getMenu(std::string params);
   Dish getOneDish(int id);
   void createDish(Dish dish);
+  Dish updateDish(Dish dish);
+  void deleteDish(int id);
 
 private:
   std::string mEndPorint;

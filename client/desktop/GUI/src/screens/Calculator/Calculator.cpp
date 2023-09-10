@@ -86,7 +86,7 @@ void Calculator::calcCost()
                 switch (col)
                 {
                 case 0:
-                    rowData.name = comboBox->currentText();
+                    rowData.name = comboBox->currentText().toStdString();
                     break;
                 case 1:
                     rowData.quantity = item->text().toFloat();
@@ -408,11 +408,11 @@ void Calculator::writeToPDF()
     {
         const Ingredient &ingredient = mDish[row];
 
-        QTableWidgetItem *item = new QTableWidgetItem(ingredient.name);
+        // QTableWidgetItem *item = new QTableWidgetItem(ingredient.name);
 
         // Устанавливаем выравнивание текста в ячейке слева
-        item->setTextAlignment(Qt::AlignVCenter);
-        table.setItem(row, 0, item);
+        // item->setTextAlignment(Qt::AlignVCenter);
+        // table.setItem(row, 0, item);
         table.setItem(row, 1, new QTableWidgetItem(QString::number(ingredient.quantity)));
         table.setItem(row, 2, new QTableWidgetItem(QString::number(static_cast<int>(ingredient.quantityUnit))));
         table.setItem(row, 3, new QTableWidgetItem(QString::number(ingredient.price)));

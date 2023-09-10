@@ -9,7 +9,7 @@ MenuService::~MenuService()
 {
 }
 
-Menu MenuService::getMenu()
+Menu MenuService::getMenu(std::string params = "")
 {
   Menu menu;
 

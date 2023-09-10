@@ -1,3 +1,5 @@
+#pragma once
+
 enum class PriceUnit
 {
   UAH_PER_KG,

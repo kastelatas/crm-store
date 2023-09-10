@@ -1,3 +1,5 @@
+#pragma once
+
 #include "common/enums/IngridientsServiceEnums.hpp"
 
 struct Ingredient
