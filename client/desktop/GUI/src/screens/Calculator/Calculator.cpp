@@ -1,12 +1,18 @@
 #include "Calculator.h"
 #include "ui_calculator.h"
 #include <QDebug>
-#include "QFile"
+#include <QFile>
 #include <QPdfWriter>
 #include <QPainter>
 #include <QMessageBox>
 #include <QStyleFactory>
 #include <functional>
+
+#include <QJsonDocument>
+#include <QJsonParseError>
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QJsonArray>
 
 Calculator::Calculator(QWidget *parent) : QWidget(parent),
                                           mUi(new Ui::calculator)
@@ -71,6 +77,7 @@ void Calculator::addNewIngridient()
 
 void Calculator::calcCost()
 {
+    mDish.clear();
     const int rowCount = mUi->calcTableWidget->rowCount();
     const int colCount = mUi->calcTableWidget->columnCount();
 
@@ -427,24 +434,43 @@ void Calculator::writeToPDF()
     table.render(&painter);
 
     painter.end();
+
+
+    QJsonObject dish;
+
+    dish.insert("name", "MyName");
+
+    QJsonArray ingridients;
+
+    for (int row = 0; row < mDish.size(); ++row)
+    {
+        const Ingredient &ingred= mDish[row];
+        QJsonObject ingridient;
+        ingridient.insert("наименование", QString::fromUtf8(ingred.name.c_str()));
+        ingridient.insert("цена", ingred.price);
+        ingridients.append(ingridient);
+    }
+    dish.insert("ингридиенты", ingridients);
+
+    QJsonDocument doc;
+    doc.setObject(dish);
+    QFile file("out.json");
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        file.write(doc.toJson());
+    }
+    file.close();
 }
 
 bool Calculator::checkUnitSimile(PriceUnit priceUnit, QuantityUnit quantityUnit)
 {
-    bool result = false;
-
-    if (quantityUnit == QuantityUnit::UNIT && priceUnit == PriceUnit::UAH_PER_UNIT)
+    switch (quantityUnit)
     {
-        return true;
+    case QuantityUnit::UNIT: return priceUnit == PriceUnit::UAH_PER_UNIT;
+    case QuantityUnit::LITER:
+    case QuantityUnit::MILLILITER: return priceUnit == PriceUnit::UAH_PER_LITER;
+    case QuantityUnit::GRAMM:
+    case QuantityUnit::KILOGRAMM: return priceUnit == PriceUnit::UAH_PER_KG;
+    default: return false;
     }
-    if (quantityUnit == QuantityUnit::LITER && priceUnit == PriceUnit::UAH_PER_LITER)
-    {
-        return true;
-    }
-    if (quantityUnit == QuantityUnit::KILOGRAMM && priceUnit == PriceUnit::UAH_PER_KG)
-    {
-        return true;
-    }
-
-    return result;
 }
